@@ -12,7 +12,8 @@ def secret(my_private_key, peer_public_key):
     return shared_secret
 
 def code(shared_secret):
-    code = hashlib.sha256(shared_secret).hexdigest()[:8]
+    hex_val = hashlib.sha256(shared_secret).hexdigest()[:4]
+    code = str(int(hex_val, 16)).zfill(4)
     return code
 
 def pubkey_to_bytes(public_key):
