@@ -1,6 +1,5 @@
 import os
 
-# Chech path and if empty.
 def check_path(shared_dir):
     if os.path.exists(shared_dir):
         return True
@@ -29,11 +28,4 @@ def read_list():
     with open("shared_dir.txt", "r") as f:
         for i in f:
             list.append(i)
-    print(list)
-
-
-
-add_path()
-
-read_list()
-
+    return list
