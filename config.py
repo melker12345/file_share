@@ -1,5 +1,25 @@
 import os
 
+# Here the ~ will not be expanded 
+# so we need to find a way to do it manually.
+PATH = os.path.expanduser("~/.config/envshare/")
+SHARED_DIR = PATH + "shared_dir.txt"
+CONFIG = PATH + "config.conf"
+os.makedirs(PATH, exist_ok=True)
+
+# INIT the conf files and shared_dirs
+# This makes the path and files
+def create_config_files():
+    if not os.path.exists(SHARED_DIR):
+        with open(SHARED_DIR, "x") as f:
+            f.write("")
+        
+    if not os.path.exists(CONFIG):
+        with open(CONFIG, "x") as f:
+            f.write("")
+    
+create_config_files()
+
 def check_path(shared_dir):
     if os.path.exists(shared_dir):
         return True
@@ -9,23 +29,24 @@ def check_path(shared_dir):
 
 def add_path():
     shared_dir = input("Enter directory to append new shared dir")
-
     if check_path(shared_dir):
-        if os.path.getsize("shared_dir.txt") == 0:
-            with open("shared_dir.txt", "w") as f:
-                f.write(shared_dir + "\n")
-                print(shared_dir)
+        if shared_dir in read_list():
+            print("already added")
         else:
-            with open("shared_dir.txt", "a") as f:
+            with open(SHARED_DIR, "a") as f:
                 f.write(shared_dir + "\n")
-                print(shared_dir)
+                print(shared_dir)        
 
     else:
         print("Not a valid directory")
 
+# reads the paths added to PATH + SHARED_DIR.
 def read_list():
-    list = []
-    with open("shared_dir.txt", "r") as f:
+    x = []
+    with open(SHARED_DIR, "r") as f:
         for i in f:
-            list.append(i)
-    return list
+            x.append(str.strip(i))
+    print(x)
+    return x
+
+add_path()

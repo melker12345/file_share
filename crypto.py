@@ -1,13 +1,15 @@
 from cryptography.hazmat.primitives.asymmetric import x25519
-import hashlib
+from cryptography.hazmat.primitives.ciphers.aead import ChaCha20Poly1305
 
+import os
+import hashlib
 
 def keygen():
     private_key = x25519.X25519PrivateKey.generate()
     public_key = private_key.public_key()
     return private_key, public_key
 
-def secret(my_private_key, peer_public_key):
+def secret(my_private_key, peer_public_key) :
     shared_secret = my_private_key.exchange(peer_public_key)
     return shared_secret
 
@@ -21,3 +23,15 @@ def pubkey_to_bytes(public_key):
 
 def bytes_to_pubkey(key_bytes):
     return x25519.X25519PublicKey.from_public_bytes(key_bytes)
+
+def encrypt(shared_secret, message):
+    key = hashlib.sha256(shared_secret).digest()
+    nonce = os.urandom(12)
+    cipher = ChaCha20Poly1305(key)
+    cipher_text = cipher.encrypt(nonce, message.encode(), None)
+    
+    return nonce + cipher_text
+
+def decrypt(shared_secret, message):
+    
+
