@@ -32,6 +32,10 @@ def encrypt(shared_secret, message):
     
     return nonce + cipher_text
 
-def decrypt(shared_secret, message):
-    
-
+def decrypt(shared_secret, cipher_text):
+    key = hashlib.sha256(shared_secret).digest()
+    nonce = cipher_text[:12]
+    cipher_text = cipher_text[12:]
+    cipher = ChaCha20Poly1305(key)
+    decrypted = cipher.decrypt(nonce, cipher_text, None)
+    return cipher_text.decode()

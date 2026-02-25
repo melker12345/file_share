@@ -3,8 +3,8 @@ import os
 # Here the ~ will not be expanded 
 # so we need to find a way to do it manually.
 PATH = os.path.expanduser("~/.config/envshare/")
-SHARED_DIR = PATH + "shared_dir.txt"
-CONFIG = PATH + "config.conf"
+SHARED_DIR = os.path.join(PATH, "shared_dir.txt")
+CONFIG = os.path.join(PATH, "config.conf")
 os.makedirs(PATH, exist_ok=True)
 
 # INIT the conf files and shared_dirs
@@ -28,17 +28,14 @@ def check_path(shared_dir):
         return False
 
 def add_path():
-    shared_dir = input("Enter directory to append new shared dir")
+    shared_dir = input("Enter directory to append new shared dir: \n")
     if check_path(shared_dir):
         if shared_dir in read_list():
             print("already added")
         else:
             with open(SHARED_DIR, "a") as f:
                 f.write(shared_dir + "\n")
-                print(shared_dir)        
-
-    else:
-        print("Not a valid directory")
+                print(shared_dir)
 
 # reads the paths added to PATH + SHARED_DIR.
 def read_list():
@@ -48,5 +45,4 @@ def read_list():
             x.append(str.strip(i))
     print(x)
     return x
-
 add_path()
