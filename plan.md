@@ -212,6 +212,8 @@ Decrypted payload is JSON:
 14. Multiple simultaneous peers.
 15. File change watching + auto-sync mode.
 16. Transfer history / audit log.
+17. Configurable file types via `config.conf` — allow users to define file patterns to share (e.g., `.env*`, `.png`, `.py`). Ship with `.env*` enabled and common types commented out. Users uncomment to enable.
+18. Local file cache — cache scan results so we don't rescan directories every time. Add an `envshare update` command to resync the cache on demand.
 
 ---
 

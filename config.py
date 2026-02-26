@@ -43,6 +43,4 @@ def read_list():
     with open(SHARED_DIR, "r") as f:
         for i in f:
             x.append(str.strip(i))
-    print(x)
     return x
-add_path()
