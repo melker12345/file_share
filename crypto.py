@@ -24,18 +24,18 @@ def pubkey_to_bytes(public_key):
 def bytes_to_pubkey(key_bytes):
     return x25519.X25519PublicKey.from_public_bytes(key_bytes)
 
-def encrypt(shared_secret, message):
+def encrypt_payload(shared_secret, message):
     key = hashlib.sha256(shared_secret).digest()
     nonce = os.urandom(12)
     cipher = ChaCha20Poly1305(key)
-    cipher_text = cipher.encrypt(nonce, message.encode(), None)
+    cipher_text = cipher.encrypt(nonce, message, None)
     
     return nonce + cipher_text
 
-def decrypt(shared_secret, cipher_text):
+def decrypt_payload(shared_secret, cipher_text):
     key = hashlib.sha256(shared_secret).digest()
     nonce = cipher_text[:12]
     cipher_text = cipher_text[12:]
     cipher = ChaCha20Poly1305(key)
     decrypted = cipher.decrypt(nonce, cipher_text, None)
-    return cipher_text.decode()
+    return decrypted
