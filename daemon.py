@@ -103,16 +103,21 @@ def handle_cli_command(cli_conn, peer_sock, shared_secret):
 
     elif action == "request":
         path = command["path"]
-        send_msg(peer_sock, shared_secret, protocol.FILE_REQUEST, {"path": path})
-        msg_type, msg_data = recive_msg(peer_sock, shared_secret)
-        if msg_data.get("ok"):
-            content = base64.b64decode(msg_data["content"])
-            save_path = command.get("save_to", path)
-            os.makedirs(os.path.dirname(save_path), exist_ok=True)
-            write_file(save_path, content)
-            ipc_send(cli_conn, {"ok": True, "saved_to": save_path})
-        else:
-            ipc_send(cli_conn, {"ok": False, "error": msg_data.get("error")})
+        try:
+            send_msg(peer_sock, shared_secret, protocol.FILE_REQUEST, {"path": path})
+            msg_type, msg_data = recive_msg(peer_sock, shared_secret)
+            if msg_data.get("ok"):
+                content = base64.b64decode(msg_data["content"])
+                save_path = command.get("save_to", path)
+                save_dir = os.path.dirname(save_path)
+                if save_dir:
+                    os.makedirs(save_dir, exist_ok=True)
+                write_file(save_path, content)
+                ipc_send(cli_conn, {"ok": True, "saved_to": save_path})
+            else:
+                ipc_send(cli_conn, {"ok": False, "error": msg_data.get("error")})
+        except Exception as e:
+            ipc_send(cli_conn, {"ok": False, "error": str(e)})
 
     elif action == "send":
         path = command["path"]

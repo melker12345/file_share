@@ -9,7 +9,7 @@ import time
 from connection import host, connect
 from pairing import pairing_host, pairing_client
 from daemon import run_daemon, IPC_HOST, IPC_PORT
-from config import add_path, PID_FILE, RECEIVED_DIR
+from config import add_path, PID_FILE, RECEIVED_DIR, LOG_FILE
 from peers import save_peer, load_peers, find_peer, get_shared_secret, forget_peer
 
 
@@ -75,11 +75,13 @@ def daemonize(peer_sock, shared_secret, listen_sock=None):
         print(f"Daemon running in background (PID: {pid})")
         return
     os.setsid()
+    log_fd = os.open(LOG_FILE, os.O_WRONLY | os.O_CREAT | os.O_APPEND, 0o644)
     devnull = os.open(os.devnull, os.O_RDWR)
     os.dup2(devnull, 0)
-    os.dup2(devnull, 1)
-    os.dup2(devnull, 2)
+    os.dup2(log_fd, 1)
+    os.dup2(log_fd, 2)
     os.close(devnull)
+    os.close(log_fd)
     run_daemon(peer_sock, shared_secret, listen_sock=listen_sock)
     os._exit(0)
 

@@ -8,6 +8,7 @@ CONFIG = os.path.join(PATH, "config.conf")
 PEERS_FILE = os.path.join(PATH, "peers.json")
 PID_FILE = os.path.join(PATH, "daemon.pid")
 RECEIVED_DIR = os.path.join(PATH, "received")
+LOG_FILE = os.path.join(PATH, "daemon.log")
 os.makedirs(PATH, exist_ok=True)
 os.makedirs(RECEIVED_DIR, exist_ok=True)
 
