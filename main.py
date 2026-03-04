@@ -9,7 +9,7 @@ import time
 from connection import host, connect
 from pairing import pairing_host, pairing_client
 from daemon import run_daemon, IPC_HOST, IPC_PORT
-from config import add_path, PID_FILE
+from config import add_path, PID_FILE, RECEIVED_DIR
 from peers import save_peer, load_peers, find_peer, get_shared_secret, forget_peer
 
 
@@ -59,6 +59,9 @@ def send_to_daemon(command):
         _ipc_send(sock, command)
         response = _ipc_recv(sock)
         sock.close()
+        if response is None:
+            print("No response from daemon. The peer may have disconnected.")
+            return {"error": "No response from daemon"}
         return response
     except ConnectionRefusedError:
         print("Daemon is not running. Start with 'envshare host' or 'envshare connect <ip>' first.")
@@ -198,6 +201,11 @@ def cmd_request(args):
     command = {"action": "request", "path": args.path}
     if args.save_to:
         command["save_to"] = args.save_to
+    else:
+        remote_path = args.path
+        project = os.path.basename(os.path.dirname(remote_path))
+        filename = os.path.basename(remote_path)
+        command["save_to"] = os.path.join(RECEIVED_DIR, project, filename)
 
     result = send_to_daemon(command)
     if result.get("ok"):
