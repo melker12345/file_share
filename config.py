@@ -5,6 +5,8 @@ import os
 PATH = os.path.expanduser("~/.config/envshare/")
 SHARED_DIR = os.path.join(PATH, "shared_dir.txt")
 CONFIG = os.path.join(PATH, "config.conf")
+PEERS_FILE = os.path.join(PATH, "peers.json")
+PID_FILE = os.path.join(PATH, "daemon.pid")
 os.makedirs(PATH, exist_ok=True)
 
 # INIT the conf files and shared_dirs

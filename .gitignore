@@ -1,6 +1,7 @@
 venv/
 __pycache__/
 *.pyc
-/tmp/envshare.sock
 shared_dir.txt
 config.conf
+peers.json
+daemon.pid
