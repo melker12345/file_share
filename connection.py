@@ -24,6 +24,8 @@ def send_msg(sock, shared_secret,  msg_type, data):
 
 def recive_msg(sock, shared_secret):
     data = sock.recv(4)
+    if len(data) < 4:
+        return protocol.QUIT, {}
     json_msg = struct.unpack('>I', data)[0]
     encrypted_blob = sock.recv(json_msg)
     json_decrypt = decrypt_payload(shared_secret, encrypted_blob)

@@ -5,23 +5,20 @@ import sys
 
 from connection import host, connect
 from pairing import pairing_host, pairing_client
-from daemon import run_daemon, SOCK_PATH
+from daemon import run_daemon, IPC_HOST, IPC_PORT
 from config import add_path
 
 
 def send_to_daemon(command):
-    """Connect to the running daemon via IPC socket, send a command, return the response."""
+    """Connect to the running daemon via local TCP, send a command, return the response."""
     try:
-        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        sock.connect(SOCK_PATH)
+        sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        sock.connect((IPC_HOST, IPC_PORT))
         sock.send(json.dumps(command).encode())
         response = sock.recv(65536)
         sock.close()
         return json.loads(response.decode())
     except ConnectionRefusedError:
-        print("Daemon is not running. Start with 'envshare host' or 'envshare connect <ip>' first.")
-        sys.exit(1)
-    except FileNotFoundError:
         print("Daemon is not running. Start with 'envshare host' or 'envshare connect <ip>' first.")
         sys.exit(1)
 

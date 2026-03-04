@@ -9,7 +9,8 @@ from file_service import scan_env_files, read_file, write_file
 from config import read_list
 import protocol
 
-SOCK_PATH = "/tmp/envshare.sock"
+IPC_HOST = "127.0.0.1"
+IPC_PORT = 44445
 
 
 def handle_peer_message(peer_sock, shared_secret):
@@ -118,13 +119,10 @@ def run_daemon(peer_sock, shared_secret):
 
     Uses `selectors` to wait on both without blocking on either.
     """
-    # Clean up old socket file if it exists
-    if os.path.exists(SOCK_PATH):
-        os.remove(SOCK_PATH)
-
-    # Create the IPC socket for local CLI communication
-    ipc_sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    ipc_sock.bind(SOCK_PATH)
+    # Create the IPC socket for local CLI communication (localhost TCP)
+    ipc_sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    ipc_sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+    ipc_sock.bind((IPC_HOST, IPC_PORT))
     ipc_sock.listen(1)
 
     sel = selectors.DefaultSelector()
@@ -155,6 +153,4 @@ def run_daemon(peer_sock, shared_secret):
     sel.close()
     ipc_sock.close()
     peer_sock.close()
-    if os.path.exists(SOCK_PATH):
-        os.remove(SOCK_PATH)
     print("Daemon stopped.")
