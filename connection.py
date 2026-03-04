@@ -11,7 +11,7 @@ def host(port=44444):
     con, addr = sock.accept()
     return con, addr
 
-def client(addr, port=44444):
+def connect(addr, port=44444):
     client_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     client_socket.connect((addr, port))  
     return client_socket
